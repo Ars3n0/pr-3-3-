@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Таблиця множення</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input {
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 5px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <label for="scoreDisplay">Загальний рахунок:</label>
+    <div id="scoreDisplay">0</div>
+
+    <button onclick="generateTask()">Наступне завдання</button>
+
+    <label for="taskDisplay">Завдання:</label>
+    <div id="taskDisplay"></div>
+
+    <form id="answerForm">
+        <label><input type="radio" name="answer" value="" id="option1"> <span id="label1"></span></label>
+        <label><input type="radio" name="answer" value="" id="option2"> <span id="label2"></span></label>
+        <label><input type="radio" name="answer" value="" id="option3"> <span id="label3"></span></label>
+    </form>
+
+    <button onclick="checkAnswer()">Перевірити</button>
+
+    <div id="result"></div>
+
+    <script>
+        let score = 0;
+        let correctAnswer;
+
+        function generateTask() {
+            const operand1 = Math.floor(Math.random() * 10) + 1;
+            const operand2 = Math.floor(Math.random() * 10) + 1;
+            correctAnswer = operand1 * operand2;
+
+            const taskDisplay = document.getElementById('taskDisplay');
+            taskDisplay.textContent = `${operand1} x ${operand2}`;
+
+            const options = generateOptions();
+            document.getElementById('label1').textContent = options[0];
+            document.getElementById('option1').value = options[0];
+
+            document.getElementById('label2').textContent = options[1];
+            document.getElementById('option2').value = options[1];
+
+            document.getElementById('label3').textContent = options[2];
+            document.getElementById('option3').value = options[2];
+        }
+
+        function generateOptions() {
+            const correctOption = correctAnswer;
+            const incorrectOption1 = correctAnswer + Math.floor(Math.random() * 5) + 1;
+            const incorrectOption2 = correctAnswer - Math.floor(Math.random() * 5) - 1;
+
+            return shuffleArray([correctOption, incorrectOption1, incorrectOption2]);
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function checkAnswer() {
+            const selectedOption = document.querySelector('input[name="answer"]:checked');
+            const userAnswer = selectedOption ? parseInt(selectedOption.value, 10) : null;
+
+            if (userAnswer === correctAnswer) {
+                score++;
+                document.getElementById('result').innerHTML = '<span style="color: black;">Правильно!</span>';
+            } else {
+                document.getElementById('result').innerHTML = `Неправильно. Правильна відповідь: ${correctAnswer}`;
+            }
+
+            document.getElementById('scoreDisplay').textContent = `Загальний рахунок: ${score}`;
+            document.getElementById('answerForm').reset();
+            generateTask();
+        }
+
+        // Генеруємо перше завдання при завантаженні сторінки
+        generateTask();
+    </script>
+</body>
+</html>
